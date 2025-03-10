@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Cuentos Infantiles</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -15,36 +16,61 @@
 
         <div class="form-container">
             <form id="storyForm">
-                <div class="input-group">
-                    <label for="nombre">Nombre del Protagonista:</label>
-                    <input type="text" id="nombre" name="nombre" required>
-                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="nombre">Nombre del Protagonista:</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
 
-                <div class="input-group">
-                    <label for="animal">Animal Favorito:</label>
-                    <input type="text" id="animal" name="animal" required>
-                </div>
+                    <div class="input-group">
+                        <label for="animal">Animal Favorito:</label>
+                        <input type="text" id="animal" name="animal" required>
+                    </div>
 
-                <div class="input-group">
-                    <label for="tema">Tema o Mensaje de la Historia:</label>
-                    <select id="tema" name="tema" required>
-                        <option value="">Selecciona un tema...</option>
-                        <option value="amistad">La Amistad</option>
-                        <option value="valentía">La Valentía</option>
-                        <option value="honestidad">La Honestidad</option>
-                        <option value="perseverancia">La Perseverancia</option>
-                        <option value="respeto">El Respeto</option>
-                        <option value="compartir">Compartir</option>
-                        <option value="medioambiente">Cuidado del Medio Ambiente</option>
-                        <option value="creatividad">La Creatividad e Imaginación</option>
-                        <option value="familia">El Amor Familiar</option>
-                        <option value="diversidad">Celebrando las Diferencias</option>
-                        <option value="responsabilidad">La Responsabilidad</option>
-                        <option value="curiosidad">La Curiosidad y el Aprendizaje</option>
-                        <option value="empatia">La Empatía</option>
-                        <option value="autoestima">La Confianza en Uno Mismo</option>
-                        <option value="trabajo_equipo">El Trabajo en Equipo</option>
-                    </select>
+                    <div class="input-group">
+                        <label for="edad">Edad Recomendada:</label>
+                        <select id="edad" name="edad" required>
+                            <option value="3-5">3-5 años</option>
+                            <option value="6-8">6-8 años</option>
+                            <option value="9-12">9-12 años</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="longitud">Longitud del Cuento:</label>
+                        <select id="longitud" name="longitud" required>
+                            <option value="corto">Corto (500 palabras)</option>
+                            <option value="medio" selected>Medio (1000 palabras)</option>
+                            <option value="largo">Largo (1500 palabras)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label for="tema">Tema o Mensaje de la Historia:</label>
+                        <select id="tema" name="tema" required>
+                            <option value="">Selecciona un tema...</option>
+                            <option value="amistad">La Amistad</option>
+                            <option value="valentía">La Valentía</option>
+                            <option value="honestidad">La Honestidad</option>
+                            <option value="perseverancia">La Perseverancia</option>
+                            <option value="respeto">El Respeto</option>
+                            <option value="compartir">Compartir</option>
+                            <option value="medioambiente">Cuidado del Medio Ambiente</option>
+                            <option value="creatividad">La Creatividad e Imaginación</option>
+                            <option value="familia">El Amor Familiar</option>
+                            <option value="diversidad">Celebrando las Diferencias</option>
+                            <option value="responsabilidad">La Responsabilidad</option>
+                            <option value="curiosidad">La Curiosidad y el Aprendizaje</option>
+                            <option value="empatia">La Empatía</option>
+                            <option value="autoestima">La Confianza en Uno Mismo</option>
+                            <option value="trabajo_equipo">El Trabajo en Equipo</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label for="moraleja">Moraleja Específica (opcional):</label>
+                        <input type="text" id="moraleja" name="moraleja" placeholder="Ej: La paciencia es la clave del éxito">
+                    </div>
                 </div>
 
                 <button type="submit" class="generate-btn">✨ Generar Cuento ✨</button>
@@ -57,7 +83,23 @@
                 <div class="loading-animation"></div>
             </div>
             <div id="story-content"></div>
-            <button class="new-story-btn">Crear Nuevo Cuento</button>
+            <div class="story-actions">
+                <button class="action-btn pdf-btn" title="Descargar PDF">
+                    <i class="fas fa-file-pdf"></i> Descargar PDF
+                </button>
+                <div class="share-buttons">
+                    <button class="action-btn share-btn" data-platform="whatsapp" title="Compartir por WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                    <button class="action-btn share-btn" data-platform="facebook" title="Compartir en Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </button>
+                    <button class="action-btn share-btn" data-platform="twitter" title="Compartir en Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                </div>
+                <button class="new-story-btn">Crear Nuevo Cuento</button>
+            </div>
         </div>
     </div>
 

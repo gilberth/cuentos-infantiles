@@ -4,6 +4,10 @@
     --accent-color: #ffb5d8;
     --text-color: #4a4a4a;
     --background-color: #f9f7ff;
+    --success-color: #4CAF50;
+    --whatsapp-color: #25D366;
+    --facebook-color: #1877F2;
+    --twitter-color: #1DA1F2;
 }
 
 body {
@@ -56,8 +60,19 @@ header p {
     transform: translateY(-5px);
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
 .input-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+}
+
+.input-group.full-width {
+    grid-column: 1 / -1;
 }
 
 label {
@@ -110,6 +125,61 @@ input:focus, select:focus {
     white-space: pre-wrap;
     line-height: 1.8;
     font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.story-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.action-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.pdf-btn {
+    background-color: var(--success-color);
+}
+
+.share-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.share-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-btn[data-platform="whatsapp"] {
+    background-color: var(--whatsapp-color);
+}
+
+.share-btn[data-platform="facebook"] {
+    background-color: var(--facebook-color);
+}
+
+.share-btn[data-platform="twitter"] {
+    background-color: var(--twitter-color);
 }
 
 .loading {
@@ -151,5 +221,18 @@ input:focus, select:focus {
     
     header h1 {
         font-size: 2rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .story-actions {
+        flex-direction: column;
+    }
+
+    .share-buttons {
+        width: 100%;
+        justify-content: center;
     }
 }
