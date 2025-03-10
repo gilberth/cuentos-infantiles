@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Cuentos Infantiles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 Generador Mágico de Cuentos 🌟</h1>
+            <p>¡Crea historias maravillosas con tus animales favoritos!</p>
+        </header>
+
+        <div class="form-container">
+            <form id="storyForm">
+                <div class="input-group">
+                    <label for="nombre">Nombre del Protagonista:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="animal">Animal Favorito:</label>
+                    <input type="text" id="animal" name="animal" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="tema">Tema o Mensaje de la Historia:</label>
+                    <select id="tema" name="tema" required>
+                        <option value="">Selecciona un tema...</option>
+                        <option value="amistad">La Amistad</option>
+                        <option value="valentía">La Valentía</option>
+                        <option value="honestidad">La Honestidad</option>
+                        <option value="perseverancia">La Perseverancia</option>
+                        <option value="respeto">El Respeto</option>
+                        <option value="compartir">Compartir</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="generate-btn">✨ Generar Cuento ✨</button>
+            </form>
+        </div>
+
+        <div class="story-container" style="display: none;">
+            <div class="loading" style="display: none;">
+                <div class="loading-text">Creando tu historia mágica... 🌈</div>
+                <div class="loading-animation"></div>
+            </div>
+            <div id="story-content"></div>
+            <button class="new-story-btn">Crear Nuevo Cuento</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
