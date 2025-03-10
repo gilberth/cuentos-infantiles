@@ -4,56 +4,115 @@ import openai
 import os
 import pdfkit
 from io import BytesIO
+import random
+import re
 
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 app = Flask(__name__)
 
+def format_story_with_emojis(story):
+    # Emojis para diferentes elementos del cuento
+    character_emojis = ["👦", "👧", "👨", "👩", "🧔", "👵", "👴", "🐱", "🐶", "🐰", "🦁", "🐯", "🐼"]
+    place_emojis = ["🏠", "🌳", "🌲", "🏞️", "🌅", "🏰", "🌆", "🎪", "🎡", "🎢"]
+    emotion_emojis = ["😊", "😃", "🥰", "😍", "🤗", "😮", "😢", "😌", "🥳", "😎"]
+    action_emojis = ["🏃", "💫", "✨", "🌟", "💝", "🎈", "🎁", "🎨", "🎭", "🎪"]
+    
+    # Dividir el cuento en párrafos
+    paragraphs = story.split('\n\n')
+    formatted_paragraphs = []
+    
+    for i, paragraph in enumerate(paragraphs):
+        # Agregar emoji al inicio de cada párrafo
+        if i == 0:  # Primer párrafo
+            emoji = random.choice(["📖", "🌟", "✨", "🎈"])
+            paragraph = f"{emoji} {paragraph}"
+        else:
+            emoji = random.choice(character_emojis + place_emojis + emotion_emojis + action_emojis)
+            paragraph = f"{emoji} {paragraph}"
+        
+        # Envolver el párrafo en una etiqueta p con clases específicas
+        formatted_paragraphs.append(f"<p>{paragraph}</p>")
+    
+    # Unir los párrafos formateados
+    formatted_story = "\n".join(formatted_paragraphs)
+    
+    # Resaltar palabras clave con clases CSS
+    keywords = {
+        'character': ['niño', 'niña', 'mamá', 'papá', 'abuelo', 'abuela', 'gato', 'perro', 'conejo'],
+        'place': ['casa', 'jardín', 'bosque', 'parque', 'escuela', 'pueblo', 'ciudad', 'montaña', 'playa'],
+        'emotion': ['feliz', 'triste', 'emocionado', 'asustado', 'sorprendido', 'alegre', 'contento'],
+        'action': ['jugar', 'correr', 'saltar', 'bailar', 'cantar', 'reír', 'compartir', 'ayudar']
+    }
+    
+    for category, words in keywords.items():
+        for word in words:
+            # Buscar la palabra y sus variaciones (mayúsculas/minúsculas)
+            pattern = re.compile(f'\\b{word}\\w*\\b', re.IGNORECASE)
+            formatted_story = pattern.sub(lambda m: f'<span class="{category}">{m.group()}</span>', formatted_story)
+    
+    return formatted_story
+
 def generar_cuento(nombre, animal, tema, edad, longitud, moraleja=None):
+    # Configurar el cliente de OpenAI con la API key
+    client = openai.OpenAI(
+        api_key=os.getenv('OPENAI_API_KEY')
+    )
+
     # Ajustar la longitud del cuento según la selección
     longitudes = {
-        'corto': 500,
-        'medio': 1000,
-        'largo': 1500
+        "corto": 500,
+        "medio": 1000,
+        "largo": 1500
     }
     palabras = longitudes.get(longitud, 1000)
     
-    # Ajustar el lenguaje según la edad
-    if edad == '3-5':
-        nivel = "muy simple y cortas, apropiadas para niños de 3 a 5 años"
-    elif edad == '6-8':
-        nivel = "sencillas pero más elaboradas, para niños de 6 a 8 años"
-    else:
-        nivel = "más complejas y descriptivas, para niños de 9 a 12 años"
-
-    prompt = f"""Genera un cuento infantil en español de aproximadamente {palabras} palabras con las siguientes características:
-    - El protagonista se llama {nombre}
-    - Debe incluir un {animal} como personaje principal
-    - El tema o mensaje principal es: {tema}
-    - Usa oraciones {nivel}
-    - El tono debe ser dulce y amigable
-    - Debe tener un inicio, desarrollo y final claro
-    - Debe incluir diálogos entre los personajes
-    - Debe tener descripciones vívidas y coloridas
+    # Construir el prompt para OpenAI
+    prompt = f"""Escribe un cuento infantil en español con las siguientes características:
+    - Protagonista: Un niño/a llamado {nombre}
+    - Animal especial: Un {animal}
+    - Tema principal: {tema}
+    - Edad recomendada: {edad} años
+    - Longitud aproximada: {palabras} palabras
+    {'- Moraleja específica: ' + moraleja if moraleja else ''}
+    
+    El cuento debe ser muy infantil, divertido y educativo, con:
+    - Descripciones coloridas y vívidas
+    - Diálogos amigables y expresivos
+    - Situaciones mágicas y sorprendentes
+    - Momentos de emoción y alegría
+    - Un final feliz y memorable
+    
+    Formato:
+    - Divide el cuento en párrafos cortos
+    - Usa un lenguaje simple y claro
+    - Incluye elementos de sorpresa
     """
-
-    if moraleja:
-        prompt += f"- La moraleja debe ser específicamente: {moraleja}"
     
     try:
-        response = openai.chat.completions.create(
+        # Generar el cuento con OpenAI
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "Eres un experto escritor de cuentos infantiles."},
+                {"role": "system", "content": "Eres un experto escritor de cuentos infantiles en español."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=2500
+            max_tokens=2000
         )
-        return response.choices[0].message.content
+        
+        # Obtener el cuento generado
+        cuento = response.choices[0].message.content.strip()
+        
+        # Formatear el cuento con emojis y HTML
+        cuento_formateado = format_story_with_emojis(cuento)
+        
+        return cuento_formateado
+        
     except Exception as e:
-        return str(e)
+        print(f"Error al generar el cuento: {str(e)}")
+        return None
 
 @app.route('/')
 def home():
@@ -61,16 +120,31 @@ def home():
 
 @app.route('/generar', methods=['POST'])
 def generar():
-    data = request.json
-    nombre = data.get('nombre', '')
-    animal = data.get('animal', '')
-    tema = data.get('tema', '')
-    edad = data.get('edad', '6-8')
-    longitud = data.get('longitud', 'medio')
-    moraleja = data.get('moraleja', '')
-    
-    cuento = generar_cuento(nombre, animal, tema, edad, longitud, moraleja)
-    return jsonify({'cuento': cuento})
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre', '')
+        animal = data.get('animal', '')
+        tema = data.get('tema', '')
+        edad = data.get('edad', '')
+        longitud = data.get('longitud', '')
+        moraleja = data.get('moraleja', None)
+        
+        if not all([nombre, animal, tema, edad, longitud]):
+            return jsonify({'error': 'Faltan datos requeridos'}), 400
+        
+        cuento = generar_cuento(nombre, animal, tema, edad, longitud, moraleja)
+        
+        if not cuento:
+            return jsonify({'error': 'Error al generar el cuento'}), 500
+            
+        # Marcar el contenido como HTML seguro
+        from markupsafe import Markup
+        cuento = Markup(cuento)
+        
+        return jsonify({'cuento': cuento})
+    except Exception as e:
+        print(f"Error en /generar: {str(e)}")
+        return jsonify({'error': 'Error al generar el cuento'}), 500
 
 @app.route('/descargar-pdf', methods=['POST'])
 def descargar_pdf():
